@@ -1,0 +1,16 @@
+FROM continuumio/miniconda3
+
+WORKDIR /app
+
+#create env
+COPY web_env.yml .
+RUN conda env create -f web_env.yml
+
+#use bash to run new env
+SHELL ["conda","run","-n","web-env","/bin/bash","-c"]
+
+#test 
+RUN python -c "import flask"
+
+COPY . .
+ENTRYPOINT ["conda","run","--no-capture-output","-n","web-env","uwsgi","uwsgi.ini"]
